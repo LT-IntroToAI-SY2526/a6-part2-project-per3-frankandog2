@@ -3,14 +3,14 @@ Multivariable Linear Regression Project
 Assignment 6 Part 3
 
 Group Members:
-- 
-- 
+- Sanyah Bovan
+- Frank McCrudden
 - 
 - 
 
-Dataset: [Name of your dataset]
-Predicting: [What you're predicting]
-Features: [List your features]
+Dataset: Possum Regression
+Predicting: A Possum's age
+Features: A skull's width of a possum, A possum's tail length, a possum's foot length.
 """
 
 import pandas as pd
@@ -34,14 +34,23 @@ def load_and_explore_data(filename):
     - Print summary statistics
     - Check for missing values
     """
-    print("=" * 70)
-    print("LOADING AND EXPLORING DATA")
-    print("=" * 70)
     
     # Your code here
     
-    pass
-
+    data = pd.read_csv(filename)
+    
+    print("=== Possum Age Data ===")
+    print(f"\nFirst 5 rows:")
+    print(data.head())
+    
+    print(f"\nDataset shape: {data.shape[0]} rows, {data.shape[1]} columns")
+    
+    print(f"\nBasic statistics:")
+    print(data.describe())
+    
+    print(f"\nColumn names: {list(data.columns)}")
+    
+    return data
 
 def visualize_data(data):
     """
@@ -57,14 +66,35 @@ def visualize_data(data):
         feature_columns: list of feature column names
         target_column: name of target column
     """
-    print("\n" + "=" * 70)
-    print("VISUALIZING RELATIONSHIPS")
-    print("=" * 70)
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    fig.suptitle('Possum Features vs Age', fontsize=16, fontweight='bold')
     
-    # Your code here
-    # Hint: Use subplots like in Part 2!
+    # Plot 1: Mileage vs Price
+    axes[0, 0].scatter(data['skullw'], data['age'], color='blue', alpha=0.6)
+    axes[0, 0].set_xlabel('Skull width')
+    axes[0, 0].set_ylabel('age (years)')
+    axes[0, 0].set_title('Skull width vs Age')
+    axes[0, 0].grid(True, alpha=0.3)
     
-    pass
+    # Plot 2: Age vs Price
+    axes[0, 1].scatter(data['taill'], data['age'], color='green', alpha=0.6)
+    axes[0, 1].set_xlabel('Tail Length')
+    axes[0, 1].set_ylabel('age (years)')
+    axes[0, 1].set_title('Tail Length vs Age')
+    axes[0, 1].grid(True, alpha=0.3)
+    
+    # Plot 3: Brand vs Price
+    axes[1, 0].scatter(data['footlgth'], data['age'], color='red', alpha=0.6)
+    axes[1, 0].set_xlabel('Foot Length')
+    axes[1, 0].set_ylabel('age (years)')
+    axes[1, 0].set_title('Foot Length vs Age')
+    axes[1, 0].grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig('possum_features.png', dpi=300, bbox_inches='tight')
+    print("\n✓ Feature plots saved as 'possum_features.png'")
+    plt.show()
+
 
 
 def prepare_and_split_data(data):
