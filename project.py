@@ -21,7 +21,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 
 # TODO: Update this with your actual filename
-DATA_FILE = 'your_data.csv'
+DATA_FILE = 'possum.csv'
 
 def load_and_explore_data(filename):
     """
@@ -34,8 +34,6 @@ def load_and_explore_data(filename):
     - Print summary statistics
     - Check for missing values
     """
-    
-    # Your code here
     
     data = pd.read_csv(filename)
     
@@ -119,11 +117,31 @@ def prepare_and_split_data(data):
     print("=" * 70)
     
     # Your code here
+    feature_columns = ['skullw', 'taill', 'footlgth']
+    X = data[feature_columns]
+    y = data['age']
     
-    pass
+    print(f"\n=== Feature Preparation ===")
+    print(f"Features (X) shape: {X.shape}")
+    print(f"Target (y) shape: {y.shape}")
+    print(f"\nFeature columns: {list(X.columns)}")
+    
+    #return X, y
+
+    X_train = X.iloc[:15]  # First 15 rows
+    X_test = X.iloc[15:]   # Remaining rows (should be 3)
+    y_train = y.iloc[:15]
+    y_test = y.iloc[15:]
+    
+    print(f"\n=== Data Split===")
+    print(f"Training set: {len(X_train)} samples (first 15 possums)")
+    print(f"Testing set: {len(X_test)} samples (last 3 possums - your holdout set!)")
+    print(f"\nNOTE: We're NOT scaling features here so coefficients are easy to interpret!")
+    
+    return X_train, X_test, y_train, y_test
 
 
-def train_model(X_train, y_train):
+def train_model(X_train, y_train, feature_names):
     """
     Train the linear regression model
     
@@ -145,11 +163,30 @@ def train_model(X_train, y_train):
     print("=" * 70)
     
     # Your code here
+    model = LinearRegression()
+    feature_names = ['skullw', 'taill', 'footlgth']
+    model.fit(X_train, y_train, feature_names)
     
-    pass
+    print(f"\n=== Model Training Complete ===")
+    print(f"Intercept: {model.intercept_:.2f} years")
+    print(f"\nCoefficients:")
+    for name, coef in zip(feature_names, model.coef_):
+        print(f"  {name}: {coef:.2f}")
+    
+    print(f"\nEquation:")
+    equation = f"Age = "
+    for i, (name, coef) in enumerate(zip(feature_names, model.coef_)):
+        if i == 0:
+            equation += f"{coef:.2f} × {name}"
+        else:
+            equation += f" + ({coef:.2f}) × {name}"
+    equation += f" + {model.intercept_:.2f}"
+    print(equation)
+    
+    return model
 
 
-def evaluate_model(model, X_test, y_test):
+def evaluate_model(model, X_test, y_test, feature_names):
     """
     Evaluate model performance
     
@@ -173,11 +210,31 @@ def evaluate_model(model, X_test, y_test):
     print("=" * 70)
     
     # Your code here
+    predictions = model.predict(X_test)
     
-    pass
+    r2 = r2_score(y_test, predictions)
+    mse = mean_squared_error(y_test, predictions)
+    rmse = np.sqrt(mse)
+    
+    print(f"\n=== Model Performance ===")
+    print(f"R² Score: {r2:.4f}")
+    print(f"  → Model explains {r2*100:.2f}% of age variation")
+    
+    print(f"\nRoot Mean Squared Error: {rmse:.2f} years")
+    print(f"  → On average, predictions are off by {rmse:.2f} years")
+    
+    # Feature importance (absolute value of coefficients)
+    print(f"\n=== Feature Importance ===")
+    feature_importance = list(zip(feature_names, np.abs(model.coef_)))
+    feature_importance.sort(key=lambda x: x[1], reverse=True)
+    
+    for i, (name, importance) in enumerate(feature_importance, 1):
+        print(f"{i}. {name}: {importance:.2f}")
+    
+    return predictions
 
 
-def make_prediction(model):
+def make_prediction(model, skullw, taill, footlgth):
     """
     Make a prediction for a new example
     
@@ -194,11 +251,15 @@ def make_prediction(model):
     print("EXAMPLE PREDICTION")
     print("=" * 70)
     
-    # Your code here
-    # Example: If predicting house price with [sqft, bedrooms, bathrooms]
-    # sample = pd.DataFrame([[2000, 3, 2]], columns=feature_names)
+    possum_features = pd.DataFrame([[skullw, taill, footlgth]], 
+                                 columns=['Skull Width', 'Tail Length', 'Foot Length'])
+    predicted_age = model.predict(possum_features)[0]
     
-    pass
+    print(f"\n=== New Prediction ===")
+    print(f"Possum features: {skullw:.0f}, {taill}, {footlgth}")
+    print(f"Predicted age: {predicted_age:,.2f} years old")
+    
+    return predicted_age
 
 
 if __name__ == "__main__":
