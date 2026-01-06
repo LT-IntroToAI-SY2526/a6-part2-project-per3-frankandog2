@@ -21,7 +21,6 @@ from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 
 # TODO: Update this with your actual filename
-DATA_FILE = 'possum.csv'
 
 def load_and_explore_data(filename):
     """
@@ -34,7 +33,6 @@ def load_and_explore_data(filename):
     - Print summary statistics
     - Check for missing values
     """
-    
     data = pd.read_csv(filename)
     
     print("=== Possum Age Data ===")
@@ -67,21 +65,21 @@ def visualize_data(data):
     fig, axes = plt.subplots(2, 2, figsize=(12, 10))
     fig.suptitle('Possum Features vs Age', fontsize=16, fontweight='bold')
     
-    # Plot 1: Mileage vs Price
+    # Plot 1: skull width vs age
     axes[0, 0].scatter(data['skullw'], data['age'], color='blue', alpha=0.6)
     axes[0, 0].set_xlabel('Skull width')
     axes[0, 0].set_ylabel('age (years)')
     axes[0, 0].set_title('Skull width vs Age')
     axes[0, 0].grid(True, alpha=0.3)
     
-    # Plot 2: Age vs Price
+    # Plot 2: tail length vs age
     axes[0, 1].scatter(data['taill'], data['age'], color='green', alpha=0.6)
     axes[0, 1].set_xlabel('Tail Length')
     axes[0, 1].set_ylabel('age (years)')
     axes[0, 1].set_title('Tail Length vs Age')
     axes[0, 1].grid(True, alpha=0.3)
     
-    # Plot 3: Brand vs Price
+    # Plot 3: foot length vs age
     axes[1, 0].scatter(data['footlgth'], data['age'], color='red', alpha=0.6)
     axes[1, 0].set_xlabel('Foot Length')
     axes[1, 0].set_ylabel('age (years)')
@@ -138,7 +136,7 @@ def prepare_and_split_data(data):
     print(f"Testing set: {len(X_test)} samples (last 3 possums - your holdout set!)")
     print(f"\nNOTE: We're NOT scaling features here so coefficients are easy to interpret!")
     
-    return X_train, X_test, y_train, y_test
+    return X_train, X_test, y_train, y_test, feature_columns
 
 
 def train_model(X_train, y_train, feature_names):
@@ -164,8 +162,8 @@ def train_model(X_train, y_train, feature_names):
     
     # Your code here
     model = LinearRegression()
-    feature_names = ['skullw', 'taill', 'footlgth']
-    model.fit(X_train, y_train, feature_names)
+    #feature_names = ['skullw', 'taill', 'footlgth']
+    model.fit(X_train, y_train)
     
     print(f"\n=== Model Training Complete ===")
     print(f"Intercept: {model.intercept_:.2f} years")
@@ -264,19 +262,19 @@ def make_prediction(model, skullw, taill, footlgth):
 
 if __name__ == "__main__":
     # Step 1: Load and explore
-    data = load_and_explore_data(DATA_FILE)
+    data = load_and_explore_data("possum.csv")
     
     # Step 2: Visualize
     visualize_data(data)
     
     # Step 3: Prepare and split
-    X_train, X_test, y_train, y_test = prepare_and_split_data(data)
+    X_train, X_test, y_train, y_test, feature_columns = prepare_and_split_data(data)
     
     # Step 4: Train
-    model = train_model(X_train, y_train)
+    model = train_model(X_train, y_train, feature_columns)
     
     # Step 5: Evaluate
-    predictions = evaluate_model(model, X_test, y_test)
+    predictions = evaluate_model(model, X_test, y_test, feature_columns)
     
     # Step 6: Make a prediction, add features as an argument
     make_prediction(model)
