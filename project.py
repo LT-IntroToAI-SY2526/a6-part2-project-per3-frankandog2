@@ -85,6 +85,8 @@ def visualize_data(data):
     axes[1, 0].set_ylabel('age (years)')
     axes[1, 0].set_title('Foot Length vs Age')
     axes[1, 0].grid(True, alpha=0.3)
+
+    axes[1,1].axis('off')
     
     plt.tight_layout()
     plt.savefig('possum_features.png', dpi=300, bbox_inches='tight')
@@ -124,17 +126,11 @@ def prepare_and_split_data(data):
     print(f"Target (y) shape: {y.shape}")
     print(f"\nFeature columns: {list(X.columns)}")
     
-    #return X, y
-
-    X_train = X.iloc[:15]  # First 15 rows
-    X_test = X.iloc[15:]   # Remaining rows (should be 3)
-    y_train = y.iloc[:15]
-    y_test = y.iloc[15:]
+    X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=42 )
     
     print(f"\n=== Data Split===")
-    print(f"Training set: {len(X_train)} samples (first 15 possums)")
-    print(f"Testing set: {len(X_test)} samples (last 3 possums - your holdout set!)")
-    print(f"\nNOTE: We're NOT scaling features here so coefficients are easy to interpret!")
+    print(f"Training set: {len(X_train)} samples")
+    print(f"Testing set: {len(X_test)} samples")
     
     return X_train, X_test, y_train, y_test, feature_columns
 
@@ -250,7 +246,7 @@ def make_prediction(model, skullw, taill, footlgth):
     print("=" * 70)
     
     possum_features = pd.DataFrame([[skullw, taill, footlgth]], 
-                                 columns=['Skull Width', 'Tail Length', 'Foot Length'])
+                                 columns=['skullw', 'taill', 'footlgth'])
     predicted_age = model.predict(possum_features)[0]
     
     print(f"\n=== New Prediction ===")
@@ -277,7 +273,7 @@ if __name__ == "__main__":
     predictions = evaluate_model(model, X_test, y_test, feature_columns)
     
     # Step 6: Make a prediction, add features as an argument
-    make_prediction(model)
+    make_prediction(model, skullw=55, taill=35, footlgth=70)
     
     print("\n" + "=" * 70)
     print("PROJECT COMPLETE!")
