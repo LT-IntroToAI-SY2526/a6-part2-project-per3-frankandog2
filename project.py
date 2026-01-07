@@ -158,7 +158,7 @@ def train_model(X_train, y_train, feature_names):
     
     # Your code here
     model = LinearRegression()
-    #feature_names = ['skullw', 'taill', 'footlgth']
+    feature_names = ['skullw', 'taill', 'footlgth']
     model.fit(X_train, y_train)
     
     print(f"\n=== Model Training Complete ===")
