@@ -160,7 +160,7 @@ def train_model(X_train, y_train, feature_names):
     model = LinearRegression()
     feature_names = ['skullw', 'taill', 'footlgth']
     model.fit(X_train, y_train)
-    
+
     print(f"\n=== Model Training Complete ===")
     print(f"Intercept: {model.intercept_:.2f} years")
     print(f"\nCoefficients:")
@@ -283,4 +283,3 @@ if __name__ == "__main__":
     print("2. Try improving your model (add/remove features)")
     print("3. Create your presentation")
     print("4. Practice presenting with your group!")
-
